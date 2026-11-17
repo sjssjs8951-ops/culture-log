@@ -1,0 +1,60 @@
+'use client';
+
+import { useState } from 'react';
+import { supabase } from '../supabase';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+
+export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    
+    if (error) {
+      alert(`Sign in failed: ${error.message}`);
+    } else {
+      router.push('/');
+    }
+  };
+
+  return (
+    <main className="min-h-screen bg-neutral-950 text-neutral-100 flex items-center justify-center p-4">
+      <form onSubmit={handleLogin} className="bg-neutral-900 border border-neutral-800/80 p-8 rounded-3xl w-full max-w-md space-y-6 shadow-2xl">
+        <h1 className="text-2xl font-bold text-white text-center tracking-tight">Sign In</h1>
+        <div>
+          <label className="block text-xs text-neutral-400 mb-1 font-medium">Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-xl text-sm text-white focus:outline-none focus:border-neutral-600"
+          />
+        </div>
+        <div>
+          <label className="block text-xs text-neutral-400 mb-1 font-medium">Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-xl text-sm text-white focus:outline-none focus:border-neutral-600"
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-white text-neutral-950 py-3.5 rounded-full font-bold text-sm hover:bg-neutral-200 transition shadow"
+        >
+          Sign In
+        </button>
+        <p className="text-center text-xs text-neutral-500">
+          Don&apos;t have an account? <Link href="/signup" className="text-white hover:underline font-medium">Sign Up</Link>
+        </p>
+      </form>
+    </main>
+  );
+}
